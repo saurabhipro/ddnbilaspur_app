@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'model/account.model.dart';
 import 'model/user_info.model.dart';
-import 'screens/filter-property.dart';
+import 'screens/filter_property.dart';
 import 'screens/home.dart';
 import 'screens/login.dart';
 import 'service/access_key.dart';
@@ -26,8 +26,8 @@ class DDNApp extends StatelessWidget {
           '/filter-property': (context) => const FilterProperty()
         },
         title: 'Digital Door Number, Bilaspur',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        darkTheme: ThemeData(primarySwatch: Colors.blueGrey),
+        theme: ThemeData(primarySwatch: Colors.deepPurple),
+        darkTheme: ThemeData(primarySwatch: Colors.deepPurple),
         color: Colors.amberAccent,
         navigatorKey: DDNApp.navigatorKey,
         supportedLocales: {const Locale('en', ' ')});

@@ -31,28 +31,30 @@ class _CameraState extends State<Camera> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return CameraPreview(cameraController);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+        Expanded(
+          child: FutureBuilder<void>(
+            future: _initializeControllerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return CameraPreview(cameraController);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
         ),
         FloatingActionButton(
           onPressed: () async {
             try {
               await _initializeControllerFuture;
               final image = await cameraController.takePicture();
-              Navigator.pop(context,image);
+              Navigator.pop(context, image);
             } catch (e) {
               print(e);
             }
           },
           child: const Icon(Icons.camera_alt),
-        )
+        ),
       ],
     );
   }
@@ -60,7 +62,7 @@ class _CameraState extends State<Camera> {
   _getAvailableCameras() async {
     WidgetsFlutterBinding.ensureInitialized();
     cameras = await availableCameras();
-    cameraController = CameraController(cameras.first, ResolutionPreset.medium);
+    cameraController = CameraController(cameras.first, ResolutionPreset.low);
     _initializeControllerFuture = cameraController!.initialize();
     setState(() {
       _cameraInitialized = true;

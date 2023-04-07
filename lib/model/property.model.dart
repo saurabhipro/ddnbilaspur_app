@@ -56,7 +56,7 @@ class Property {
     propertyDetails = json['propertyDetails'] != null
         ? PropertyDetails.fromJson(json['propertyDetails'])
         : null;
-    survey = json['survey'] != null ? Survey.fromJson(json['ward']) : null;
+    survey = json['survey'] != null ? Survey.fromJson(json['survey']) : null;
     ward = json['ward'] != null ? Ward.fromJson(json['ward']) : null;
     approver =
         json['approver'] != null ? UserInfo.fromJson(json['approver']) : null;
@@ -84,7 +84,9 @@ class Property {
     if (propertyDetails != null) {
       data['propertyDetails'] = propertyDetails!.toJson();
     }
-    data['survey'] = survey;
+    if (survey != null) {
+      data['survey'] = survey;
+    }
     if (ward != null) {
       data['ward'] = ward!.toJson();
     }

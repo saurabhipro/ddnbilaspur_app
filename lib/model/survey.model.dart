@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:ddnbilaspur_mob/model/user_info.model.dart';
 
 import '../model/property_type.model.dart';
@@ -8,7 +10,7 @@ class Survey {
   String? timeOfSurvey;
   double? latitude;
   double? longitude;
-  String? heightFromSeaLevel;
+  double? heightFromSeaLevel;
   String? memo;
   String? signalStrength;
   String? satelliteCount;

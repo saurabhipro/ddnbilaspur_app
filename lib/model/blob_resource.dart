@@ -3,7 +3,7 @@ import 'survey.model.dart';
 class BlobResource {
   int? id;
   String? fileName;
-  List<String>? fileContent;
+  String? fileContent;
   String? fileContentContentType;
   String? resourceFor;
   bool? fileMovedToS3;
@@ -23,7 +23,7 @@ class BlobResource {
   BlobResource.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fileName = json['fileName'];
-    fileContent = json['fileContent'].cast<String>();
+    fileContent = json['fileContent'];
     fileContentContentType = json['fileContentContentType'];
     resourceFor = json['resourceFor'];
     fileMovedToS3 = json['fileMovedToS3'];

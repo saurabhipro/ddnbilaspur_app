@@ -1,13 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:camera/camera.dart';
+import 'package:ddnbilaspur_mob/model/surveyWithImages.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../app-const/app_constants.dart';
 import '../ddn_app.dart';
+import '../model/device_vitals.model.dart';
 import '../model/property.model.dart';
 import '../model/property_type.model.dart';
 import '../model/survey.model.dart';
 import '../service/http_request.service.dart';
+import 'camera.dart';
 
 class SurveyBasic extends StatefulWidget {
   const SurveyBasic({Key? key, required this.property}) : super(key: key);
@@ -24,6 +30,17 @@ class _SurveyBasicState extends State<SurveyBasic> {
   var _rationCardNumber = false;
   var _bpLevel = false;
   var _propertyListAvailable = false;
+  CapturedImages deviceVitals =
+      CapturedImages(null, null, null, null, null, null);
+  double? longitude;
+  double? latitude;
+  double? altitude;
+  bool _loadingFormData = false;
+  bool _latLongAltSet = false;
+  bool image1Found = false;
+  XFile? image1;
+  bool image2Found = false;
+  XFile? image2;
   var _submitted = false;
 
   final mobileNumberController = TextEditingController();
@@ -36,18 +53,23 @@ class _SurveyBasicState extends State<SurveyBasic> {
   @override
   void initState() {
     super.initState();
-    getPropertyTypes();
-    mobileNumberController.text = widget.property.mobileNumber ?? '';
-    alternateMobileNumberController.text =
-        widget.property.alternateMobileNumber ?? '';
-    ownerNameController.text =
-        widget.property.propertyDetails!.ownerName == null
-            ? ''
-            : widget.property.propertyDetails!.ownerName!;
-    fatherNameController.text =
-        widget.property.propertyDetails!.fatherName == null
-            ? ''
-            : widget.property.propertyDetails!.fatherName!;
+    _getPropertyTypes();
+    if (widget.property.surveyed == null || !widget.property.surveyed!) {
+      mobileNumberController.text = widget.property.mobileNumber ?? '';
+      alternateMobileNumberController.text =
+          widget.property.alternateMobileNumber ?? '';
+      ownerNameController.text =
+          widget.property.propertyDetails!.ownerName == null
+              ? ''
+              : widget.property.propertyDetails!.ownerName!;
+      fatherNameController.text =
+          widget.property.propertyDetails!.fatherName == null
+              ? ''
+              : widget.property.propertyDetails!.fatherName!;
+    } else {
+      _getOldSurvey();
+    }
+    _getLatLongAlt();
   }
 
   @override
@@ -110,8 +132,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
                                         "${AppConstant.baseUrl}/api/properties/visit-again"),
                                     {"Content-Type": "application/json"},
                                     jsonEncode(widget.property));
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                                Navigator.pop(context, true);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text(
@@ -129,6 +150,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
                               ))))
                 ],
               ),
+              if (_loadingFormData) const Text('Loading....'),
               const SizedBox(
                 height: 10,
               ),
@@ -172,7 +194,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
                 child: TextFormField(
                   controller: mobileNumberController,
                   validator: (value) {
-                    return validateMobile();
+                    return _validateMobile();
                   },
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -188,7 +210,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
                 child: TextFormField(
                   controller: alternateMobileNumberController,
                   validator: (value) {
-                    return validateMobile();
+                    return _validateMobile();
                   },
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -270,9 +292,62 @@ class _SurveyBasicState extends State<SurveyBasic> {
                   ),
                 ),
               ),
-              _propertyListAvailable
-                  ? getPropertyListView()
-                  : const Center(child: CircularProgressIndicator()),
+              _getPropertyListView(),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _latLongAltSet
+                      ? Column(
+                          children: [
+                            Text('Longitude: ${longitude.toString()}'),
+                            Text('Latitude: ${latitude.toString()}'),
+                            Text('Altitude: ${altitude.toString()}'),
+                          ],
+                        )
+                      : const CircularProgressIndicator(),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _latLongAltSet = false;
+                        });
+                        _getLatLongAlt();
+                      },
+                      icon: const Icon(Icons.refresh))
+                ],
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () async {
+                  final image1 = await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Camera()));
+                  setState(() {
+                    this.image1 = image1;
+                    image1 == null ? image1Found = false : image1Found = true;
+                  });
+                },
+                child: Center(
+                  child: image1 == null
+                      ? Image.asset('assets/images/camera_placeholder.png')
+                      : Image.file(File(image1!.path)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () async {
+                  final image2 = await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Camera()));
+                  setState(() {
+                    this.image2 = image2;
+                    image2 == null ? image2Found = false : image2Found = true;
+                  });
+                },
+                child: Center(
+                  child: image2 == null
+                      ? Image.asset('assets/images/camera_placeholder.png')
+                      : Image.file(File(image2!.path)),
+                ),
+              ),
               const SizedBox(height: 10),
               Container(
                 height: 50,
@@ -286,8 +361,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
                       : () {
                           if (_formKey.currentState!.validate()) {
                             _submitted = true;
-                            saveSurvey();
-                            Navigator.pop(context);
+                            _saveSurvey();
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -316,7 +390,42 @@ class _SurveyBasicState extends State<SurveyBasic> {
     );
   }
 
-  Future<List<PropertyType>> getPropertyTypes() async {
+  _getLatLongAlt() async {
+    try {
+      Position position = await _determinePosition();
+      latitude = position.latitude;
+      longitude = position.longitude;
+      altitude = position.altitude;
+      setState(() {
+        _latLongAltSet = true;
+      });
+    } catch (e) {
+      print('position determination failed: $e');
+    }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<List<PropertyType>> _getPropertyTypes() async {
     final response = await authorizedGetRequest(
         Uri.parse('${AppConstant.baseUrl}/api/property-types?page=0&size=20'),
         {'Content-Type': 'application/json'});
@@ -326,7 +435,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
       var propertyTypeJson = list[i];
       var propertyType = PropertyType.fromJson(propertyTypeJson);
       propertyTypes.add(propertyType);
-      if (setExistingPropertyTypes(propertyType)) {
+      if (_setExistingPropertyTypes(propertyType)) {
         selectedPropertyTypes[propertyType] = true;
       }
     }
@@ -337,7 +446,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
     return propertyTypes;
   }
 
-  getPropertyListView() {
+  _getPropertyListView() {
     if (!_propertyListAvailable) {
       return const CircularProgressIndicator();
     }
@@ -357,12 +466,11 @@ class _SurveyBasicState extends State<SurveyBasic> {
     );
   }
 
-  setExistingPropertyTypes(PropertyType propertyType) {
+  _setExistingPropertyTypes(PropertyType propertyType) {
     if (widget.property.propertyTypes == null) {
       return false;
     }
     for (var i = 0; i < widget.property.propertyTypes!.length; ++i) {
-
       var existingPropertyType = widget.property.propertyTypes![i];
       if (existingPropertyType.properName == propertyType.properName) {
         return true;
@@ -371,7 +479,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
     return false;
   }
 
-  validateMobile() {
+  _validateMobile() {
     if (mobileNumberController.text.isEmpty &&
         alternateMobileNumberController.text.isEmpty) {
       return 'Mobile Number and Alternate Mobile Number both can\'t be empty';
@@ -386,12 +494,17 @@ class _SurveyBasicState extends State<SurveyBasic> {
     return null;
   }
 
-  saveSurvey() {
+  _saveSurvey() {
     Survey survey = Survey();
     survey.ownerName = ownerNameController.text;
+    survey.surveyId = widget.property.propertyUid;
     survey.fatherSpouseName = fatherNameController.text;
-    survey.mobileNumber = mobileNumberController.text;
-    survey.alternateMobileNumber = alternateMobileNumberController.text;
+    survey.mobileNumber = mobileNumberController.text.isEmpty
+        ? null
+        : mobileNumberController.text;
+    survey.alternateMobileNumber = alternateMobileNumberController.text.isEmpty
+        ? null
+        : alternateMobileNumberController.text;
     survey.rationCardNumber = rationCardNumberController.text.isNotEmpty
         ? rationCardNumberController.text
         : null;
@@ -401,8 +514,46 @@ class _SurveyBasicState extends State<SurveyBasic> {
     for (var key in selectedPropertyTypes.keys) {
       survey.propertyTypes?.add(key);
     }
+    survey.longitude = longitude;
+    survey.latitude = latitude;
+    survey.heightFromSeaLevel = altitude;
     widget.property.survey = survey;
-    authorizedPostRequest(Uri.parse("${AppConstant.baseUrl}/api/surveys"),
-        {'Content-Type': 'application/json'}, jsonEncode(widget.property));
+    CapturedImages images = CapturedImages(
+        image1Found,
+        image1Found ? base64Encode(File(image1!.path).readAsBytesSync()) : null,
+        'image/jpeg',
+        image2Found,
+        image2Found ? base64Encode(File(image2!.path).readAsBytesSync()) : null,
+        'image/jpeg');
+    SurveyWithProperty surveyWithProperty =
+        SurveyWithProperty(widget.property, images);
+    authorizedPostRequest(
+        Uri.parse("${AppConstant.baseUrl}/api/surveys/survey-with-image"),
+        {'Content-Type': 'application/json'},
+        jsonEncode(surveyWithProperty));
+  }
+
+  Future<void> _getOldSurvey() async {
+    setState(() {
+      _loadingFormData = true;
+    });
+    final response = await authorizedGetRequest(
+        Uri.parse(
+            '${AppConstant.baseUrl}/api/surveys/get-one/${widget.property.survey!.id}'),
+        {"Content_Type": "application/json"});
+    widget.property.survey = Survey.fromJson(jsonDecode(response.body));
+    setState(() {
+      mobileNumberController.text = widget.property.survey!.mobileNumber ?? '';
+      alternateMobileNumberController.text =
+          widget.property.survey!.alternateMobileNumber ?? '';
+      ownerNameController.text = widget.property.survey!.ownerName == null
+          ? ''
+          : widget.property.survey!.ownerName!;
+      fatherNameController.text =
+          widget.property.survey!.fatherSpouseName == null
+              ? ''
+              : widget.property.survey!.fatherSpouseName!;
+      _loadingFormData=false;
+    });
   }
 }

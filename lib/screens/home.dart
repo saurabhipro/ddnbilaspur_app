@@ -5,21 +5,24 @@ import 'package:flutter/material.dart';
 import '../ddn_app.dart';
 import '../model/account.model.dart';
 import '../model/user_info.model.dart';
+import '../widgets/drawer_widget.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() => _HomeState();
+  final String appVersion = '1.0.0'; // Replace with your app version
 }
 
 class _HomeState extends State<Home> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-            leading: Image.asset('assets/icons/favicon.ico'),
+            // leading: Image.asset('assets/icons/favicon.ico'),
             title: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -94,84 +97,96 @@ class _HomeState extends State<Home> {
                 ],
               ),
             )),
-        body: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.question_answer_outlined),
-                      iconSize: 100,
-                      onPressed: () {
-                        DDNApp.navigatorKey.currentState
-                            ?.pushNamed('/filter-property');
-                      },
-                    ),
-                    const Text('Survey')
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.add_chart_outlined),
-                      iconSize: 100,
-                      onPressed: () {
-                        DDNApp.navigatorKey.currentState?.pushNamed('/survey');
-                      },
-                    ),
-                    const Text('Add Property')
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.dashboard_customize_outlined),
-                      iconSize: 100,
-                      onPressed: () {},
-                    ),
-                    const Text('Dashboard')
-                  ],
-                ),
-              ],
+        drawer: const DrawerWidget(appVersion: '1.0'),
+        body: Container(
+
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.teal,
+              width: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.report_gmailerrorred_outlined),
-                      iconSize: 100,
-                      onPressed: () {},
-                    ),
-                    const Text('Reports')
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.account_box_outlined),
-                      iconSize: 100,
-                      onPressed: () {},
-                    ),
-                    const Text('About')
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.policy_outlined),
-                      iconSize: 100,
-                      onPressed: () {},
-                    ),
-                    const Text('Privacy Policy')
-                  ],
-                ),
-              ],
-            )
-          ],
+          ),
+
+          padding: const EdgeInsets.only(top :100),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.question_answer_outlined),
+                        iconSize: 100,
+                        onPressed: () {
+                          DDNApp.navigatorKey.currentState
+                              ?.pushNamed('/filter-property');
+                        },
+                      ),
+                      const Text('Survey')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add_chart_outlined),
+                        iconSize: 100,
+                        onPressed: () {
+                          DDNApp.navigatorKey.currentState?.pushNamed('/survey');
+                        },
+                      ),
+                      const Text('Add Property')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.dashboard_customize_outlined),
+                        iconSize: 100,
+                        onPressed: () {},
+                      ),
+                      const Text('Dashboard')
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.report_gmailerrorred_outlined),
+                        iconSize: 100,
+                        onPressed: () {},
+                      ),
+                      const Text('Reports')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.account_box_outlined),
+                        iconSize: 100,
+                        onPressed: () {},
+                      ),
+                      const Text('About')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.policy_outlined),
+                        iconSize: 100,
+                        onPressed: () {},
+                      ),
+                      const Text('Privacy Policy')
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
         ));
   }
 

@@ -1,8 +1,13 @@
-import 'package:ddnbilaspur_mob/screens/survey_basic.dart';
+import 'dart:convert';
+
+import 'package:ddnbilaspur_mob/screens/survey_details.dart';
 import 'package:flutter/material.dart';
 
+import '../app-const/app_constants.dart';
 import '../ddn_app.dart';
 import '../model/property.model.dart';
+import '../model/survey.model.dart';
+import '../service/http_request.service.dart';
 
 class PropertyDetailsView extends StatefulWidget {
   const PropertyDetailsView({Key? key, required this.property})
@@ -19,9 +24,13 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
   final wardNameController = TextEditingController();
   final ownerNameController = TextEditingController();
   final mobileController = TextEditingController();
+  Survey? survey;
+
+  bool _loadingSurveyData = false;
 
   @override
   void initState() {
+    _getSurvey();
     ddnStringController.text = widget.property.ddnString!;
     propertyUidController.text = widget.property.propertyUid!;
     wardNameController.text = widget.property.ward!.wardName!;
@@ -69,6 +78,12 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 10),
+              const Text('Property Details',
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -132,42 +147,26 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
               const SizedBox(
                 height: 10,
               ),
-              if (widget.property.surveyed == null ||
-                  !widget.property.surveyed!)
-                Row(
-                  children: [
-                    const SizedBox(width: 10),
-                    (widget.property.surveyed == null)
-                        ? Container(
-                            height: 50,
-                            width: 200,
-                            decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SurveyBasic(
-                                            property: widget.property)));
-                              },
-                              child: const Text(
-                                'Start Survey',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 25),
-                              ),
-                            ),
-                          )
-                        : const Text('Test'),
-                    const Spacer(),
-                    TextButton(
-                        onPressed: () {}, child: const Text('Not Available')),
-                    const SizedBox(width: 10)
-                  ],
-                )
+              _loadingSurveyData
+                  ? const CircularProgressIndicator()
+                  : SurveyDetails(survey: survey),
             ],
           ),
         ));
+  }
+
+  Future<void> _getSurvey() async {
+    setState(() {
+      _loadingSurveyData = true;
+    });
+    final response = await authorizedGetRequest(
+        Uri.parse(
+            '${AppConstant.baseUrl}/api/surveys/get-one/${widget.property.survey!.id}'),
+        {"Content_Type": "application/json"});
+    final survey = Survey.fromJson(jsonDecode(response.body));
+    setState(() {
+      _loadingSurveyData = false;
+      this.survey = survey;
+    });
   }
 }
