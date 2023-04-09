@@ -25,6 +25,8 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
   final ownerNameController = TextEditingController();
   final mobileController = TextEditingController();
   final propertyStatusController = TextEditingController();
+  final fatherNameController = TextEditingController();
+
   Survey? survey;
 
   bool _loadingSurveyData = false;
@@ -37,8 +39,13 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
     ownerNameController.text = widget.property.propertyDetails == null
         ? 'Property Details Not Available'
         : (widget.property.propertyDetails!.ownerName == null
-            ? ''
+            ? '#N/A'
             : widget.property.propertyDetails!.ownerName!);
+    fatherNameController.text = widget.property.propertyDetails == null
+        ? 'Property Details Not Available'
+        : (widget.property.propertyDetails!.fatherName == null
+            ? '#N/A'
+            : widget.property.propertyDetails!.fatherName!);
     mobileController.text = widget.property.mobileNumber!;
     propertyStatusController.text = widget.property.propertyStatus!;
     super.initState();
@@ -55,6 +62,7 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
     ownerNameController.dispose();
     mobileController.dispose();
     propertyUidController.dispose();
+    fatherNameController.dispose();
     super.dispose();
   }
 
@@ -134,6 +142,18 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Owner Name',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextFormField(
+                  enabled: false,
+                  controller: fatherNameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Father/Spouse Name',
                   ),
                 ),
               ),
