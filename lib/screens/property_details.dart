@@ -24,13 +24,13 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
   final wardNameController = TextEditingController();
   final ownerNameController = TextEditingController();
   final mobileController = TextEditingController();
+  final propertyStatusController = TextEditingController();
   Survey? survey;
 
   bool _loadingSurveyData = false;
 
   @override
   void initState() {
-    _getSurvey();
     ddnStringController.text = widget.property.ddnString!;
     propertyUidController.text = widget.property.propertyUid!;
     wardNameController.text = widget.property.ward!.wardName!;
@@ -40,7 +40,11 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
             ? ''
             : widget.property.propertyDetails!.ownerName!);
     mobileController.text = widget.property.mobileNumber!;
+    propertyStatusController.text = widget.property.propertyStatus!;
     super.initState();
+    if (widget.property.surveyed != null && widget.property.surveyed == true) {
+      _getSurvey();
+    }
   }
 
   @override
@@ -50,6 +54,7 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
     wardNameController.dispose();
     ownerNameController.dispose();
     mobileController.dispose();
+    propertyUidController.dispose();
     super.dispose();
   }
 
@@ -141,6 +146,20 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Mobile Number',
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextFormField(
+                  enabled: false,
+                  controller: propertyStatusController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Status',
                   ),
                 ),
               ),

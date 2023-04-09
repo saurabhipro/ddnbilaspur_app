@@ -1,3 +1,4 @@
+import 'package:ddnbilaspur_mob/screens/add_property.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,8 @@ class DDNApp extends StatelessWidget {
         routes: {
           '/': (context) => const Home(),
           '/login': (context) => const Login(),
-          '/filter-property': (context) => const FilterProperty()
+          '/filter-property': (context) => const FilterProperty(),
+          '/add-property': (context) => const AddProperty()
         },
         title: 'Digital Door Number, Bilaspur',
         theme: ThemeData(primarySwatch: Colors.deepPurple),

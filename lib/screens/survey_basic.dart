@@ -41,7 +41,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
   XFile? image1;
   bool image2Found = false;
   XFile? image2;
-  var _submitted = false;
+  bool _submitted = false;
 
   final mobileNumberController = TextEditingController();
   final alternateMobileNumberController = TextEditingController();
