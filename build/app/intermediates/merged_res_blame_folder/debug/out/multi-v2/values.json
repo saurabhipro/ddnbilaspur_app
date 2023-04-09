@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_mobile_app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
                 {
                     "source": "/home/rusty/.gradle/caches/transforms-3/6710ee2e3546b398da00e75003abfc33/transformed/core-1.9.0/res/values/values.xml",
@@ -95,7 +95,7 @@
                     }
                 },
                 {
-                    "source": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_mobile_app/android/app/src/main/res/values/styles.xml",
+                    "source": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_app/android/app/src/main/res/values/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

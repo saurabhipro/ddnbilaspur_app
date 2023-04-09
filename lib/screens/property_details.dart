@@ -147,9 +147,11 @@ class _PropertyDetailsViewState extends State<PropertyDetailsView> {
               const SizedBox(
                 height: 10,
               ),
-              _loadingSurveyData
-                  ? const CircularProgressIndicator()
-                  : SurveyDetails(survey: survey),
+              if (widget.property.surveyed != null &&
+                  widget.property.surveyed == true)
+                _loadingSurveyData
+                    ? const CircularProgressIndicator()
+                    : SurveyDetails(survey: survey),
             ],
           ),
         ));

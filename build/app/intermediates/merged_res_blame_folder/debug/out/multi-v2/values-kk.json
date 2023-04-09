@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_mobile_app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-kk/values-kk.xml",
+            "outputFile": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-kk/values-kk.xml",
             "map": [
                 {
                     "source": "/home/rusty/.gradle/caches/transforms-3/f568b3e0e4b3738147ed358a145ad2d6/transformed/jetified-play-services-base-18.1.0/res/values-kk/values.xml",
