@@ -192,6 +192,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
+                  keyboardType: TextInputType.number,
                   controller: mobileNumberController,
                   validator: (value) {
                     return _validateMobile();
@@ -208,6 +209,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
+                  keyboardType: TextInputType.number,
                   controller: alternateMobileNumberController,
                   validator: (value) {
                     return _validateMobile();
@@ -317,36 +319,58 @@ class _SurveyBasicState extends State<SurveyBasic> {
                 ],
               ),
               const SizedBox(height: 10),
-              OutlinedButton(
-                onPressed: () async {
-                  final image1 = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Camera()));
-                  setState(() {
-                    this.image1 = image1;
-                    image1 == null ? image1Found = false : image1Found = true;
-                  });
-                },
-                child: Center(
-                  child: image1 == null
-                      ? Image.asset('assets/images/camera_placeholder.png')
-                      : Image.file(File(image1!.path)),
-                ),
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton(
-                onPressed: () async {
-                  final image2 = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Camera()));
-                  setState(() {
-                    this.image2 = image2;
-                    image2 == null ? image2Found = false : image2Found = true;
-                  });
-                },
-                child: Center(
-                  child: image2 == null
-                      ? Image.asset('assets/images/camera_placeholder.png')
-                      : Image.file(File(image2!.path)),
-                ),
+              Row(
+                children: [
+                  const SizedBox(width: 5),
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        final image1 = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Camera()));
+                        setState(() {
+                          this.image1 = image1;
+                          image1 == null
+                              ? image1Found = false
+                              : image1Found = true;
+                        });
+                      },
+                      child: Center(
+                        child: image1 == null
+                            ? Image.asset(
+                                'assets/images/camera_placeholder.png')
+                            : Image.file(File(image1!.path)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        final image2 = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Camera()));
+                        setState(() {
+                          this.image2 = image2;
+                          image2 == null
+                              ? image2Found = false
+                              : image2Found = true;
+                        });
+                      },
+                      child: Center(
+                        child: image2 == null
+                            ? Image.asset(
+                                'assets/images/camera_placeholder.png')
+                            : Image.file(File(image2!.path)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                ],
               ),
               const SizedBox(height: 10),
               Container(
@@ -359,7 +383,37 @@ class _SurveyBasicState extends State<SurveyBasic> {
                   onPressed: _submitted
                       ? null
                       : () {
-                          if (_formKey.currentState!.validate()) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Confirm Survey'),
+                                    content: const Text(
+                                        'Are You Sure to submit the survey?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel')),
+                                      TextButton(
+                                          onPressed: () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              _submitted = true;
+                                              _saveSurvey();
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                      content: Text(
+                                                          'Basic survey updated for property!')));
+                                            } else {
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                          child: const Text('OK'))
+                                    ],
+                                  ));
+                          /*if (_formKey.currentState!.validate()) {
                             _submitted = true;
                             _saveSurvey();
                             Navigator.pop(context);
@@ -367,7 +421,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
                                 const SnackBar(
                                     content: Text(
                                         'Basic survey updated for property!')));
-                          }
+                          }*/
                         },
                   child: _submitted
                       ? const SizedBox(
@@ -553,7 +607,8 @@ class _SurveyBasicState extends State<SurveyBasic> {
           widget.property.survey!.fatherSpouseName == null
               ? ''
               : widget.property.survey!.fatherSpouseName!;
-      _loadingFormData=false;
+
+      _loadingFormData = false;
     });
   }
 }

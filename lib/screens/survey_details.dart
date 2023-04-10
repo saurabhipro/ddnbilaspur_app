@@ -207,14 +207,31 @@ class _SurveyDetailsState extends State<SurveyDetails> {
               const SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text(propertyTypes)),
-              image1Loading
-                  ? const CircularProgressIndicator()
-                  : Image.memory(const Base64Decoder().convert(image1)),
+                  child: Text('Property Types: $propertyTypes')),
               const SizedBox(height: 10),
-              image2loading
-                  ? const CircularProgressIndicator()
-                  : Image.memory(const Base64Decoder().convert(image2)),
+              Row(
+                children: [
+                  const SizedBox(width: 5),
+                  Expanded(
+                      flex: 1,
+                      child: image1Loading
+                          ? const CircularProgressIndicator()
+                          : Image.memory(
+                              const Base64Decoder().convert(image1),
+                              fit: BoxFit.scaleDown,
+                            )),
+                  const SizedBox(width: 5),
+                  Expanded(
+                      flex: 1,
+                      child: image2loading
+                          ? const CircularProgressIndicator()
+                          : Image.memory(
+                              const Base64Decoder().convert(image2),
+                            )),
+                  const SizedBox(width: 5),
+                ],
+              ),
+              const SizedBox(height: 10),
             ],
           );
   }

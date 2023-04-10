@@ -66,6 +66,7 @@ class _AddPropertyState extends State<AddProperty> {
           key: _formKey,
           child: Column(
             children: [
+              const SizedBox(height: 10),
               const Text('Add Property',
                   style: TextStyle(
                       color: Colors.grey,
