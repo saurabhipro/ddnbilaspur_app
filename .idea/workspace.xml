@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="956ad3dd-67e5-4081-af15-20431d7f75d7" name="Changes" comment="add_property.dart created.">
+    <list default="true" id="956ad3dd-67e5-4081-af15-20431d7f75d7" name="Changes" comment="survey images in one row.&#10;confirmation dialog before saving survey.">
+      <change afterPath="$PROJECT_DIR$/lib/screens/dashboard.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/reports.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ddnbilaspur_app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ddnbilaspur_app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/4f2a58af27abc49ecf55570043bbf938.cache.dill.track.dill" beforeDir="false" afterPath="$PROJECT_DIR$/build/4f2a58af27abc49ecf55570043bbf938.cache.dill.track.dill" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/intermediates/assets/debug/mergeDebugAssets/flutter_assets/kernel_blob.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/assets/debug/mergeDebugAssets/flutter_assets/kernel_blob.bin" afterDir="false" />
@@ -19,9 +22,12 @@
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk.sha1" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk.sha1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/app-const/app_constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/app-const/app_constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ddn_app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ddn_app.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/add_property.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/add_property.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/filter_property.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/filter_property.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/home.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/survey_basic.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/survey_basic.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/survey_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/survey_details.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,30 +55,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "dart.analysis.tool.window.visible": "false",
-    "flutter.view.tool.window.visible": "true",
-    "io.flutter.reload.alreadyRun": "true",
-    "last_opened_file_path": "/home/rusty/DDN_Bilaspur/github/ddnbilaspur_app",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater",
-    "show.migrate.to.gradle.popup": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/rusty/DDN_Bilaspur/github/ddnbilaspur_app&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
@@ -91,7 +96,17 @@
       <workItem from="1681022668115" duration="787000" />
       <workItem from="1681026098493" duration="11288000" />
       <workItem from="1681097539021" duration="9946000" />
-      <workItem from="1681170308394" duration="342000" />
+      <workItem from="1681170308394" duration="1338000" />
+      <workItem from="1681216406375" duration="786000" />
+      <workItem from="1681233243798" duration="12728000" />
+      <workItem from="1681257924095" duration="1040000" />
+      <workItem from="1681274675761" duration="1621000" />
+      <workItem from="1681283204203" duration="6714000" />
+      <workItem from="1681301531768" duration="1177000" />
+      <workItem from="1681303851372" duration="1187000" />
+      <workItem from="1681345116366" duration="358000" />
+      <workItem from="1681356840380" duration="313000" />
+      <workItem from="1681358350989" duration="6246000" />
     </task>
     <task id="LOCAL-00001" summary="repository management">
       <created>1680876356908</created>
@@ -121,7 +136,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681039397705</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="survey images in one row.&#10;confirmation dialog before saving survey.">
+      <created>1681170709400</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1681170709401</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +164,7 @@
     <MESSAGE value="repository management" />
     <MESSAGE value="property_details.dart" />
     <MESSAGE value="add_property.dart created." />
-    <option name="LAST_COMMIT_MESSAGE" value="add_property.dart created." />
+    <MESSAGE value="survey images in one row.&#10;confirmation dialog before saving survey." />
+    <option name="LAST_COMMIT_MESSAGE" value="survey images in one row.&#10;confirmation dialog before saving survey." />
   </component>
 </project>

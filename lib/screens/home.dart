@@ -140,7 +140,9 @@ class _HomeState extends State<Home> {
                       IconButton(
                         icon: const Icon(Icons.dashboard_customize_outlined),
                         iconSize: 100,
-                        onPressed: () {},
+                        onPressed: () {
+                          DDNApp.navigatorKey.currentState?.pushNamed('/dashboard');
+                        },
                       ),
                       const Text('Dashboard')
                     ],
@@ -155,7 +157,9 @@ class _HomeState extends State<Home> {
                       IconButton(
                         icon: const Icon(Icons.report_gmailerrorred_outlined),
                         iconSize: 100,
-                        onPressed: () {},
+                        onPressed: () {
+                          DDNApp.navigatorKey.currentState?.pushNamed('/reports');
+                        },
                       ),
                       const Text('Reports')
                     ],

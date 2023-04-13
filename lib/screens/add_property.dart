@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:ddnbilaspur_mob/model/property.model.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../app-const/app_constants.dart';
 import '../ddn_app.dart';
+import '../model/property_details.model.dart';
 import '../model/property_type.model.dart';
 import '../service/http_request.service.dart';
 
@@ -29,7 +32,7 @@ class _AddPropertyState extends State<AddProperty> {
   Map<PropertyType, bool?> selectedPropertyTypes = {};
   late final List<PropertyType> propertyTypes;
 
-  bool _latLongSet = false;
+  bool _latLongAltSet = false;
   bool _submitted = false;
   bool _propertyListAvailable = false;
 
@@ -37,6 +40,7 @@ class _AddPropertyState extends State<AddProperty> {
   void initState() {
     super.initState();
     _getPropertyTypes();
+    _getLatLongAlt();
   }
 
   @override
@@ -144,7 +148,7 @@ class _AddPropertyState extends State<AddProperty> {
                 child: TextFormField(
                   controller: address,
                   validator: (value) {
-                    if(address.text.isEmpty) {
+                    if (address.text.isEmpty) {
                       return 'Address can\'t be empty!';
                     }
                   },
@@ -158,6 +162,29 @@ class _AddPropertyState extends State<AddProperty> {
                 height: 10,
               ),
               _getPropertyListView(),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _latLongAltSet
+                      ? Column(
+                          children: [
+                            Text('Longitude: ${longitude.toString()}'),
+                            Text('Latitude: ${latitude.toString()}'),
+                          ],
+                        )
+                      : const CircularProgressIndicator(),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _latLongAltSet = false;
+                        });
+                        _getLatLongAlt();
+                      },
+                      icon: const Icon(Icons.refresh))
+                ],
+              ),
+              const SizedBox(height: 10),
               const SizedBox(
                 height: 10,
               ),
@@ -171,31 +198,51 @@ class _AddPropertyState extends State<AddProperty> {
                   onPressed: _submitted
                       ? null
                       : () {
-                    if (_formKey.currentState!.validate()) {
-                      _submitted = true;
-                    /*  _saveSurvey();*/
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Basic survey updated for property!')));
-                    }
-                  },
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Confirm New Property'),
+                                    content: const Text(
+                                        'Are You Sure to add New Property?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel')),
+                                      TextButton(
+                                          onPressed: () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              _submitted = true;
+                                              _addProperty();
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                      content: Text(
+                                                          'New Property Added!')));
+                                            } else {
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                          child: const Text('OK'))
+                                    ],
+                                  ));
+                        },
                   child: _submitted
                       ? const SizedBox(
-                      height: 10.0,
-                      width: 10.0,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.lime,
-                      ))
+                          height: 10.0,
+                          width: 10.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.lime,
+                          ))
                       : const Text(
-                    'Submit',
-                    style: TextStyle(color: Colors.white, fontSize: 25),
-                  ),
+                          'Submit',
+                          style: TextStyle(color: Colors.white, fontSize: 25),
+                        ),
                 ),
               )
-
             ],
           ),
         ),
@@ -254,4 +301,60 @@ class _AddPropertyState extends State<AddProperty> {
     return null;
   }
 
+  _getLatLongAlt() async {
+    try {
+      Position position = await _determinePosition();
+      latitude = position.latitude;
+      longitude = position.longitude;
+      setState(() {
+        _latLongAltSet = true;
+      });
+    } catch (e) {
+      print('position determination failed: $e');
+    }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
+  void _addProperty() {
+    List<PropertyType> propertyTypes = [];
+    for (var propertyType in selectedPropertyTypes.keys) {
+      propertyTypes.add(propertyType);
+    }
+    PropertyDetails propertyDetails = PropertyDetails(
+      ownerName: ownerName.text,
+      fatherName: fatherName.text,
+    );
+    Property property = Property(
+        mobileNumber: mobile.text,
+        alternateMobileNumber: alternateMobile.text,
+        addressLine1: address.text,
+        latitude: latitude,
+        longitude: longitude,
+        propertyDetails: propertyDetails,
+        propertyTypes: propertyTypes);
+    authorizedPostRequest(
+        Uri.parse('${AppConstant.baseUrl}/api/properties/discoveredInSurvey'),
+        {'Content-Type': 'application/json'},
+        jsonEncode(property));
+  }
 }

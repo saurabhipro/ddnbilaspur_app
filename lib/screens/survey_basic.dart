@@ -413,15 +413,6 @@ class _SurveyBasicState extends State<SurveyBasic> {
                                           child: const Text('OK'))
                                     ],
                                   ));
-                          /*if (_formKey.currentState!.validate()) {
-                            _submitted = true;
-                            _saveSurvey();
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Basic survey updated for property!')));
-                          }*/
                         },
                   child: _submitted
                       ? const SizedBox(

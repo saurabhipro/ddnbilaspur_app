@@ -63,6 +63,9 @@ class _FilterPropertyState extends State<FilterProperty> {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(
+                height: 10,
+              ),
               const Text('Filter Property',
                   style: TextStyle(
                       color: Colors.grey,
@@ -196,7 +199,6 @@ class _FilterPropertyState extends State<FilterProperty> {
           Uri.parse(
               '${AppConstant.baseUrl}/api/property-details/${property.propertyDetails!.id}'),
           {'Content-Type': 'application/json'});
-
       property.propertyDetails =
           PropertyDetails.fromJson(jsonDecode(response1.body));
       propertyList.add(property);
