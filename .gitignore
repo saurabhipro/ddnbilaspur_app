@@ -1,0 +1,30 @@
+# Flutter/Dart specific files and directories
+*.iml
+*.lock
+*.apk
+.flutter-plugins
+.packages
+.pub/
+build/
+.dart_tool/
+.idea/
+.vscode/
+ios/Flutter/
+android/.gradle/
+android/captures/
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcworkspace/xcshareddata/
+ios/Pods/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.pb.dart
+*.pbserver.dart
+*.pbenum.dart
+*.pbjson.dart
+
+# Other
+Thumbs.db
+*.log
+*.log.*
