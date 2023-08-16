@@ -5,6 +5,5 @@ import 'ddn_app.dart';
 
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
-//test
   runApp(DDNApp());
 }
