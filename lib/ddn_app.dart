@@ -16,7 +16,7 @@ class DDNApp extends StatelessWidget {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
-  DDNApp({super.key});
+  const DDNApp({super.key});
 
   @override
   Widget build(BuildContext context) {

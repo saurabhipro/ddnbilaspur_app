@@ -4,6 +4,9 @@
         android:label="ddnbilaspur_mob"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyCQ1XvoKRmX1qqo2XwlLj2C2gCIiCjtgFE"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

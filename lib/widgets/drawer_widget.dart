@@ -76,6 +76,13 @@ class DrawerWidget extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.policy_outlined),
+            title: const Text('Privacy Policy'),
+            onTap: () {
+              // logout the user
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
