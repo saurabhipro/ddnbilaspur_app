@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:ddnbilaspur_mob/app-const/app_constants.dart';
 import 'package:ddnbilaspur_mob/model/property.model.dart';
 import 'package:ddnbilaspur_mob/screens/property_details.dart';
 import 'package:ddnbilaspur_mob/service/http_request.service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -162,7 +165,6 @@ class _HomeState extends State<Home> {
                 GoogleMap(
                   minMaxZoomPreference: const MinMaxZoomPreference(15, 22),
                   myLocationEnabled: true,
-                  myLocationButtonEnabled: true,
                   zoomControlsEnabled: false,
                   rotateGesturesEnabled: false,
                   mapToolbarEnabled: true,
@@ -184,7 +186,7 @@ class _HomeState extends State<Home> {
                         "longitude.greaterThanOrEqual=${llb.southwest.longitude}"
                         "&longitude.lessThanOrEqual=${llb.northeast.longitude}"
                         "&latitude.greaterThanOrEqual=${llb.southwest.latitude}"
-                        "&latitude.lessThanOrEqual=${llb.northeast.latitude}&page=0&size=50";
+                        "&latitude.lessThanOrEqual=${llb.northeast.latitude}&page=0&size=200";
                     final wards = DDNApp.userInfo!.wards;
                     for (var i = 0; i < wards!.length; ++i) {
                       var ward = wards[i];
@@ -194,6 +196,8 @@ class _HomeState extends State<Home> {
                         Uri.parse(url), {'Content-Type': 'application/json'});
                     final propertyList = jsonDecode(propertyResponse.body);
                     markers = {};
+                    final Uint8List markerIcon = await getBytesFromAsset(
+                        'assets/icons/green_pin_64px.ico', 148);
                     for (var i = 0; i < propertyList.length; ++i) {
                       Property property = Property.fromJson(propertyList[i]);
                       Marker marker = Marker(
@@ -212,6 +216,26 @@ class _HomeState extends State<Home> {
                                             PropertyDetailsView(
                                                 property: property)));
                               }));
+                      if (property.propertyStatus != null &&
+                          property.propertyStatus!.contains('INSTALLED')) {
+                        marker = Marker(
+                            icon: BitmapDescriptor.fromBytes(markerIcon),
+                            markerId: MarkerId('${property.id!}'),
+                            draggable: false,
+                            position:
+                                LatLng(property.latitude!, property.longitude!),
+                            infoWindow: InfoWindow(
+                                title: property.propertyUid,
+                                snippet: "DDN: ${property.ddnString}\nTest",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PropertyDetailsView(
+                                                  property: property)));
+                                }));
+                      }
                       markers.add(marker);
                     }
                     setState(() {
@@ -300,5 +324,15 @@ class _HomeState extends State<Home> {
           'Location permissions are permanently denied, we cannot request permissions.');
     }
     return await Geolocator.getCurrentPosition();
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 }

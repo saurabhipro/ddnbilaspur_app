@@ -78,6 +78,8 @@ flutter:
         - assets/images/logo.jpg
         - assets/images/bilaspur.jpeg
         - assets/icons/favicon.ico
+        - assets/icons/green_pin_32px.ico
+        - assets/icons/green_pin_64px.ico
         - assets/images/camera_placeholder.png
 
     # An image asset can refer to one or more resolution-specific "variants", see
