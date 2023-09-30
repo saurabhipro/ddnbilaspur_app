@@ -163,7 +163,7 @@ class _HomeState extends State<Home> {
           ? Stack(
               children: [
                 GoogleMap(
-                  minMaxZoomPreference: const MinMaxZoomPreference(15, 22),
+                  /*minMaxZoomPreference: const MinMaxZoomPreference(15, 22),*/
                   myLocationEnabled: true,
                   zoomControlsEnabled: false,
                   rotateGesturesEnabled: false,
