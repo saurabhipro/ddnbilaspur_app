@@ -238,7 +238,7 @@ class _DashboardState extends State<Dashboard> {
 
   _getTotalInstalled() async {
     String url =
-        '${AppConstant.baseUrl}/api/properties/count?propertyStatus.equals=DOWNLOADED';
+        '${AppConstant.baseUrl}/api/properties/count?propertyStatus.equals=INSTALLED';
     for (var i = 0; i < DDNApp.userInfo!.wards!.length; ++i) {
       url += '&wardId.in=${DDNApp.userInfo!.wards![i].id}';
     }

@@ -47,7 +47,7 @@ class PropertyDetails {
     unit = json['unit'];
     sparrowPropertyId = json['sparrowPropertyId'];
     nsgPropertyId = json['nsgPropertyId'];
-    ddnImage = json['ddnImage'];
+    ddnImage = null;
   }
 
   Map<String, dynamic> toJson() {
