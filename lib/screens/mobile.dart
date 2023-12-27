@@ -81,13 +81,12 @@ class _MobileState extends State<Mobile> {
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
-                              /*if (mobileController.text=='1111111111') {
+                              if (mobileController.text=='1111111111') {
                                 print('--------------------------------------------${mobileController.text}');
                                 _fakeAuthenticate();
                               } else {
                                 _generateOtp();
-                              }*/
-                                _generateOtp();
+                              }
                             }
                           },
                     child: otpSent
