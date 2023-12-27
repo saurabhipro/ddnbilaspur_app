@@ -1,4 +1,4 @@
-package com.redmelon.ddnbilaspur_mob;
+package com.redmelon.ddnbilaspur_app;
 
 import io.flutter.embedding.android.FlutterActivity;
 

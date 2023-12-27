@@ -26,11 +26,11 @@ class _SurveyDetailsState extends State<SurveyDetails> {
   final alternateMobileNumber = TextEditingController();
   final rationCardNumber = TextEditingController();
   final bpNumber = TextEditingController();
+  BlobResource? blobResource1;
+  BlobResource? blobResource2;
   String propertyTypes = '';
   bool image1Loading = false;
   bool image2loading = false;
-  String image1 = '';
-  String image2 = '';
 
   @override
   void initState() {
@@ -54,7 +54,8 @@ class _SurveyDetailsState extends State<SurveyDetails> {
         propertyTypes += ' ${propertyType.properName!}';
       }
     }
-    _getSurveyImage();
+    _getSurveyImage1();
+    _getSurveyImage2();
   }
 
   @override
@@ -200,18 +201,24 @@ class _SurveyDetailsState extends State<SurveyDetails> {
                       flex: 1,
                       child: image1Loading
                           ? const CircularProgressIndicator()
-                          : Image.memory(
-                              const Base64Decoder().convert(image1),
-                              fit: BoxFit.scaleDown,
-                            )),
+                          : blobResource1!.fileMovedToS3!
+                              ? Image.network(blobResource1!.fileS3URL!)
+                              : Image.memory(
+                                  const Base64Decoder()
+                                      .convert(blobResource1!.fileContent!),
+                                  fit: BoxFit.scaleDown,
+                                )),
                   const SizedBox(width: 5),
                   Expanded(
                       flex: 1,
-                      child: image2loading
+                      child: (image2loading
                           ? const CircularProgressIndicator()
-                          : Image.memory(
-                              const Base64Decoder().convert(image2),
-                            )),
+                          : blobResource2!.fileMovedToS3!
+                              ? Image.network(blobResource2!.fileS3URL!)
+                              : Image.memory(
+                                  const Base64Decoder()
+                                      .convert(blobResource2!.fileContent!),
+                                ))),
                   const SizedBox(width: 5),
                 ],
               ),
@@ -220,20 +227,28 @@ class _SurveyDetailsState extends State<SurveyDetails> {
           );
   }
 
-  _getSurveyImage() async {
+  _getSurveyImage1() async {
     image1Loading = true;
+    final response = await authorizedGetRequest(
+        Uri.parse(
+            '${AppConstant.baseUrl}/api/blob-resources?surveyId.equals=${widget.survey!.id}'),
+        {'Content-Type': 'application/json'});
+    final fileList = jsonDecode(response.body);
+    setState(() {
+      blobResource1 = BlobResource.fromJson(fileList[0]);
+      image1Loading = false;
+    });
+  }
+
+  _getSurveyImage2() async {
     image2loading = true;
     final response = await authorizedGetRequest(
         Uri.parse(
             '${AppConstant.baseUrl}/api/blob-resources?surveyId.equals=${widget.survey!.id}'),
         {'Content-Type': 'application/json'});
     final fileList = jsonDecode(response.body);
-    final BlobResource blobResource1 = BlobResource.fromJson(fileList[0]);
-    final BlobResource blobResource2 = BlobResource.fromJson(fileList[1]);
     setState(() {
-      image1 = blobResource1.fileContent!;
-      image2 = blobResource2.fileContent!;
-      image1Loading = false;
+      blobResource2 = BlobResource.fromJson(fileList[1]);
       image2loading = false;
     });
   }
