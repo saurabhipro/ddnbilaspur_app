@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import '../ddn_app.dart';
 import '../model/property.model.dart';
 import '../service/http_request.service.dart';
-import 'survey_basic.dart';
+import 'survey_form.dart';
 
 class FilterProperty extends StatefulWidget {
   const FilterProperty({Key? key}) : super(key: key);
@@ -277,7 +277,7 @@ class _FilterPropertyState extends State<FilterProperty> {
                 final done = Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SurveyBasic(property: property)));
+                        builder: (context) => SurveyForm(property: property)));
                 setState(() {
                   _properties = [];
                 });

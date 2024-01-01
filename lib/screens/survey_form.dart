@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:camera/camera.dart';
 import 'package:ddnbilaspur_mob/model/surveyWithImages.dart';
 import 'package:flutter/material.dart';
@@ -12,18 +12,19 @@ import '../model/device_vitals.model.dart';
 import '../model/property.model.dart';
 import '../model/property_type.model.dart';
 import '../model/survey.model.dart';
+import '../service/access_key.dart';
 import '../service/http_request.service.dart';
 import 'camera.dart';
 
-class SurveyBasic extends StatefulWidget {
-  const SurveyBasic({Key? key, required this.property}) : super(key: key);
+class SurveyForm extends StatefulWidget {
+  const SurveyForm({Key? key, required this.property}) : super(key: key);
   final Property property;
 
   @override
-  State<SurveyBasic> createState() => _SurveyBasicState();
+  State<SurveyForm> createState() => _SurveyFormState();
 }
 
-class _SurveyBasicState extends State<SurveyBasic> {
+class _SurveyFormState extends State<SurveyForm> {
   final _formKey = GlobalKey<FormState>();
   Map<PropertyType, bool?> selectedPropertyTypes = {};
   late final List<PropertyType> propertyTypes;
@@ -42,6 +43,7 @@ class _SurveyBasicState extends State<SurveyBasic> {
   bool image2Found = false;
   XFile? image2;
   bool _submitted = false;
+  bool _surveySaved = false;
 
   final mobileNumberController = TextEditingController();
   final alternateMobileNumberController = TextEditingController();
@@ -380,39 +382,41 @@ class _SurveyBasicState extends State<SurveyBasic> {
                     borderRadius: BorderRadius.circular(20)),
                 child: TextButton(
                   onPressed: _submitted
-                      ? null
-                      : () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Confirm Survey'),
-                                    content: const Text(
-                                        'Are You Sure to submit the survey?'),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
-                                          child: const Text('Cancel')),
-                                      TextButton(
-                                          onPressed: () {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              _submitted = true;
-                                              _saveSurvey();
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(const SnackBar(
-                                                      content: Text(
-                                                          'Basic survey updated for property!')));
-                                            } else {
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child: const Text('OK'))
-                                    ],
-                                  ));
-                        },
+                      ? _surveySaved
+                          ? () => Navigator.pop(context)
+                          : null
+                      : _surveySaved
+                          ? () => Navigator.pop(context)
+                          : () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: const Text('Confirm Survey'),
+                                        content: const Text(
+                                            'Are You Sure to submit the survey?'),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  context, 'Cancel'),
+                                              child: const Text('Cancel')),
+                                          TextButton(
+                                              onPressed: () {
+                                                if (_formKey.currentState!
+                                                    .validate()) {
+                                                  setState(() {
+                                                    _submitted = true;
+                                                    _saveSurvey();
+                                                  });
+                                                  Navigator.pop(context);
+                                                } else {
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                              child: const Text('OK'))
+                                        ],
+                                      ));
+                            },
                   child: _submitted
                       ? const SizedBox(
                           height: 10.0,
@@ -421,9 +425,10 @@ class _SurveyBasicState extends State<SurveyBasic> {
                             strokeWidth: 2,
                             color: Colors.lime,
                           ))
-                      : const Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white, fontSize: 25),
+                      : Text(
+                          _surveySaved ? 'Back' : 'Submit',
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 25),
                         ),
                 ),
               )
@@ -538,7 +543,9 @@ class _SurveyBasicState extends State<SurveyBasic> {
     return null;
   }
 
-  _saveSurvey() {
+  Future<void> _saveSurvey() async {
+    await Future.delayed(const Duration(seconds: 5));
+
     Survey survey = Survey();
     survey.ownerName = ownerNameController.text;
     survey.surveyId = widget.property.propertyUid;
@@ -571,10 +578,24 @@ class _SurveyBasicState extends State<SurveyBasic> {
         'image/jpeg');
     SurveyWithProperty surveyWithProperty =
         SurveyWithProperty(widget.property, images);
-    authorizedPostRequest(
+    var accessKey = await AccessKeyStorage.getAccessToken();
+    Map<String, String> headers = {};
+    headers.addAll({'Authorization': 'Bearer ${accessKey!}'});
+    headers.addAll({'Content-Type': 'application/json'});
+    print(headers);
+    final response = await http.post(
+        Uri.parse("${AppConstant.baseUrl}/api/surveys/survey-with-image"),
+        headers: headers,
+        body: jsonEncode(surveyWithProperty));
+    /*authorizedPostRequest(
         Uri.parse("${AppConstant.baseUrl}/api/surveys/survey-with-image"),
         {'Content-Type': 'application/json'},
-        jsonEncode(surveyWithProperty));
+        jsonEncode(surveyWithProperty));*/
+    print(response.statusCode);
+    setState(() {
+      _submitted = false;
+      _surveySaved = true;
+    });
   }
 
   Future<void> _getOldSurvey() async {
